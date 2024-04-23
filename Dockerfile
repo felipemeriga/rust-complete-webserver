@@ -1,29 +1,30 @@
-FROM rust:1.77.1 as build
+# 'builder' stage installs all dependencies and builds the project
+FROM rust:bookworm as builder
+WORKDIR /usr/src/app
 
-# create a new empty shell project
-RUN USER=root cargo new --bin holodeck
-WORKDIR /holodeck
-
-# copy over your manifests
-COPY ./Cargo.lock ./Cargo.lock
-COPY ./Cargo.toml ./Cargo.toml
-
-# this build step will cache your dependencies
-RUN cargo build --release
-RUN rm src/*.rs
-
-# copy your source tree
-COPY ./src ./src
-
-# build for release
-RUN rm ./target/release/deps/holodeck*
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src/
+RUN echo "fn main() {println!(\"if you see this, the build broke\")}" > src/main.rs
+# This will cache dependencies and perform a dummy build.
 RUN cargo build --release
 
-# our final base
-FROM rust:1.77.1
+# Now copy actual source code and perform the real build
+COPY src/ ./src
+RUN cargo clean
+RUN cargo build --release
 
-# copy the build artifact from the build stage
-COPY --from=build /holodeck/target/release/holodeck .
+# 'runtime' stage simply uses ready artifacts from 'builder' without any redundant build artefacts
+FROM debian:bookworm-slim
+WORKDIR /usr/local/bin
 
-# set the startup command to run your binary
-CMD ["./holodeck"]
+RUN apt-get update
+RUN apt-get update && apt install -y openssl
+RUN apt-get install -y libssl-dev   # <-- Add this line
+COPY --from=builder /usr/src/app/target/release/rust-complete-webserver .
+
+# This line exposes port 8080
+EXPOSE 8080
+
+# This allows application logs to be viewed using `docker logs`.
+RUN apt-get update && apt-get install -y libssl-dev && rm -rf /var/lib/apt/lists/*
+CMD ["./rust-complete-webserver"]
