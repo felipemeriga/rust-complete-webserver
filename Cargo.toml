@@ -1,0 +1,35 @@
+[package]
+name = "rust-complete-webserver"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+mockall = "0.12.1"
+twelf = { version= "0.15.0", features = ["yaml"]}
+tokio = { version = "1.36.0", features = ["macros"] }
+awc = { version = "3.4.0", features = ["openssl"] }
+actix = "0.13.3"
+actix-cors = "0.7.0"
+actix-files = "0.6.2"
+actix-web = { version = "4.5.1", features = ["rustls"] }
+actix-web-httpauth = "0.8.1"
+dotenv = "0.15.0"
+env_logger = "0.10.0"
+chrono = { version = "0.4.23", features = ["serde"] }
+bson = "2.9.0"
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.114"
+serde_yaml = "0.9.33"
+jsonwebtoken = "^8.0.0-beta.6"
+mongodb = "2.8.2"
+futures-util = "0.3.30"
+derive_more = "0.99.17"
+strum_macros = "0.26.2"
+testcontainers = { version = "0.15.0", features = ["tokio", "async-trait"] }
+async-trait = "0.1.79"
+bincode = "2.0.0-rc.3"
+thiserror = "1.0.58"
+lazy_static = "1.4.0"
+uuid = { version = "1.8.0", features = ["serde", "v4"] }
