@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -27,10 +27,11 @@ jobs:
           command: fmt
           args: -- --check
 
-      - name: Lint with Clippy
-        uses: actions-rs/clippy-check@v1
+      - name: Lint with Giraffate
+        uses: giraffate/clippy-action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: 'github-pr-review'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         uses: actions-rs/cargo@v1
